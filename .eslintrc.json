@@ -1,0 +1,101 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    "airbnb-typescript",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json",
+    "ecmaVersion": 12,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "plugins": [
+    "@typescript-eslint",
+    "simple-import-sort",
+    "unused-imports",
+    "sort-keys-fix",
+    "react-native"
+  ],
+  "rules": {
+    "simple-import-sort/sort": "error",
+    "sort-imports": "off",
+    "import/order": "off",
+    "import/first": "error",
+    "import/no-duplicates": "error",
+    "no-void": "off",
+    "unused-imports/no-unused-imports-ts": "error",
+    "sort-keys": "off",
+    "react/jsx-pascal-case": "error",
+    "react/jsx-max-props-per-line": "error",
+    "react-native/no-unused-styles": "error",
+    "react-native/split-platform-components": "error",
+    "react-native/no-inline-styles": "error",
+    "react-native/no-color-literals": "error",
+    "react-native/no-raw-text": "error",
+    "@typescript-eslint/consistent-type-imports": [
+      "error",
+      {
+        "prefer": "type-imports"
+      }
+    ],
+    "func-style": [
+      "error",
+      "expression",
+      {
+        "allowArrowFunctions": true
+      }
+    ],
+    "@typescript-eslint/consistent-type-definitions": [
+      "error",
+      "interface"
+    ],
+    "@typescript-eslint/explicit-function-return-type": [
+      "error",
+      {
+        "allowHigherOrderFunctions": true
+      }
+    ],
+    "sort-keys-fix/sort-keys-fix": [
+      "error",
+      "asc",
+      {
+        "natural": true
+      }
+    ],
+    "react/jsx-sort-props": [
+      "error",
+      {
+        "callbacksLast": true,
+        "shorthandFirst": true
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "./src/App.tsx"
+      ],
+      "rules": {
+        "global-require": "off",
+        "@typescript-eslint/no-var-requires": "off",
+        "@typescript-eslint/no-unsafe-assignment": "off",
+        "react/style-prop-object": [
+          "error",
+          {
+            "allow": [
+              "StatusBar"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
