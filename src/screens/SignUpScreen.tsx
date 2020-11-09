@@ -1,10 +1,11 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Text } from 'react-native-elements';
+
+import SignUpForm from '../components/SignUpForm';
 
 const SignUpScreen = (): JSX.Element => (
   <View>
-    <Text> Ceci est la page d inscription</Text>
+    <SignUpForm />
   </View>
 );
 

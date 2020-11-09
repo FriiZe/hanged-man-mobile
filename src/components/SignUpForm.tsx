@@ -2,10 +2,25 @@ import React, { useState } from 'react';
 import { View } from 'react-native';
 import { Button, Icon, Input } from 'react-native-elements';
 
-const SignUpForm = (): JSX.Element => {
+import wretch from '../utils/wretch';
+
+const SignUpForm: React.FC = () => {
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  const signUp = async (): Promise<void> => {
+    setIsButtonLoading(true);
+    // TODO
+    await wretch
+      .url('/auth/register')
+      .catcher(500, (err) => {})
+      .catcher(409, (err) => {})
+      .catcher(422, (err) => {})
+      .post({ password, username });
+    setIsButtonLoading(false);
+  };
 
   return (
     <View style={{ display: 'flex' }}>
@@ -55,8 +70,9 @@ const SignUpForm = (): JSX.Element => {
           width: '70%',
         }}
         disabled={!username || !password || !confirmPassword}
+        loading={isButtonLoading}
         title="S'inscrire"
-        onPress={():void => {}}
+        onPress={async ():Promise<void> => { await signUp(); }}
       />
     </View>
   );
