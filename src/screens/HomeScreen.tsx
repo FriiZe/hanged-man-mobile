@@ -6,11 +6,10 @@ import { View } from 'react-native';
 import { Button } from 'react-native-elements';
 
 import type { UnsignedRoutes } from '../routes';
-import showToast from '../utils/showToast';
 
-type HomeProps = StackScreenProps<UnsignedRoutes, 'Home'>;
+type Props = StackScreenProps<UnsignedRoutes, 'Home'>;
 
-const HomeScreen: React.FC<HomeProps> = ({ navigation }) => (
+const HomeScreen: React.FC<Props> = ({ navigation }) => (
   <View style={{ flex: 1, justifyContent: 'center' }}>
     <Button
       buttonStyle={{ alignSelf: 'center', marginBottom: 10 }}
@@ -23,15 +22,6 @@ const HomeScreen: React.FC<HomeProps> = ({ navigation }) => (
       }}
       title="Connexion"
       onPress={(): void => navigation.push('SignIn')}
-    />
-    <Button
-      buttonStyle={{
-        alignSelf: 'center', marginBottom: 10,
-      }}
-      title="Show Toast"
-      onPress={(): void => {
-        showToast('Salut les gens !', 'Bonjour à tous', 'info');
-      }}
     />
   </View>
 );

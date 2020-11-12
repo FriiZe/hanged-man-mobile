@@ -21,9 +21,9 @@ const App = (): JSX.Element => (
     <StatusBar style="auto" />
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen component={HomeScreen} name="Home" />
-        <Stack.Screen component={SignInScreen} name="SignIn" />
-        <Stack.Screen component={SignUpScreen} name="SignUp" />
+        <Stack.Screen component={HomeScreen} name="Home" options={{ title: 'Accueil' }} />
+        <Stack.Screen component={SignInScreen} name="SignIn" options={{ title: 'Connexion' }} />
+        <Stack.Screen component={SignUpScreen} name="SignUp" options={{ title: 'Inscription' }} />
       </Stack.Navigator>
       <Toast ref={(ref: unknown) => Toast.setRef(ref)} />
     </NavigationContainer>

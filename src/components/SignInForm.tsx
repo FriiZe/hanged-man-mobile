@@ -7,7 +7,7 @@ const SignInForm = (): JSX.Element => {
   const [password, setPassword] = useState('');
 
   return (
-    <View>
+    <View style={{ alignSelf: 'center', width: '80%' }}>
       <Input
         label="Nom d'utilisateur"
         leftIcon={(

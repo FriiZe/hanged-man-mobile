@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View } from 'react-native';
 import { Button, Icon, Input } from 'react-native-elements';
 
+import showToast from '../utils/showToast';
 import wretch from '../utils/wretch';
 
 const SignUpForm: React.FC = () => {
@@ -12,18 +13,34 @@ const SignUpForm: React.FC = () => {
 
   const signUp = async (): Promise<void> => {
     setIsButtonLoading(true);
+
     // TODO
-    await wretch
-      .url('/auth/register')
-      .catcher(500, (err) => {})
-      .catcher(409, (err) => {})
-      .catcher(422, (err) => {})
-      .post({ password, username });
+    try {
+      await wretch
+        .url('/auth/register')
+        .catcher(409, () => {
+          showToast('Identifiant déjà utilisé', 'Veuillez choisir un autre identifiant', 'error');
+        })
+        .post({ password, username })
+        .catch((_err) => {
+          console.log(_err);
+          showToast('Une erreur s\'est produite', 'Ça vient de chez nous, comme le bon goût', 'error');
+        });
+      showToast('Compte créé avec succès', 'Essayez de vous connecter sur la page de connection', 'success');
+    } catch (err) {
+      showToast('Une erreur s\'est produite', 'Ça vient de chez nous, comme le bon goût', 'error');
+    }
     setIsButtonLoading(false);
   };
 
+  const errorMessage = confirmPassword !== password && confirmPassword !== ''
+    ? 'Les mots de passe sont différents'
+    : '';
+
+  const validator = password.length < 8 && password !== '' ? 'Au moins 8 caractères' : '';
+
   return (
-    <View style={{ display: 'flex' }}>
+    <View style={{ alignSelf: 'center', width: '80%' }}>
       <Input
         label="Nom d'utilisateur"
         leftIcon={(
@@ -38,6 +55,7 @@ const SignUpForm: React.FC = () => {
       />
       <Input
         secureTextEntry
+        errorMessage={validator}
         label="Mot de passe"
         leftIcon={(
           <Icon
@@ -50,8 +68,10 @@ const SignUpForm: React.FC = () => {
         onChangeText={(value): void => { setPassword(value); }}
       />
       <Input
+        renderErrorMessage
         secureTextEntry
-        disabled={!password}
+        disabled={password.length < 8}
+        errorMessage={errorMessage}
         label="Confirmation"
         leftIcon={(
           <Icon
