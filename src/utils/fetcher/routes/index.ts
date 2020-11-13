@@ -6,4 +6,5 @@ type FullAuthRoutes = {
 
 type Routes = FullAuthRoutes;
 
+// eslint-disable-next-line import/prefer-default-export
 export type { Routes };

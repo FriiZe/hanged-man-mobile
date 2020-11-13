@@ -1,7 +1,7 @@
 import { fetcher } from './fetcher';
 import showToast from './showToast';
 
-const fetch = fetcher('https://api.hanged-man.potb.dev')
+const fetch = fetcher('https://dev.api.hanged-man.potb.dev')
   .headers({
     Accept: 'application/json',
     'Content-Type': 'application/json',

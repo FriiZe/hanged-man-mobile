@@ -1,9 +1,13 @@
+import { useNavigation } from '@react-navigation/native';
+import type { StackNavigationProp } from '@react-navigation/stack';
 import React, { useState } from 'react';
 import { View } from 'react-native';
 import { Button, Icon, Input } from 'react-native-elements';
 
-import fetch from '../utils/fetch';
-import showToast from '../utils/showToast';
+import AuthContext from '../helpers/AuthContext';
+import type { UnsignedRoutes } from '../routes';
+
+type Props = StackNavigationProp<UnsignedRoutes, 'SignUp'>;
 
 const SignUpForm: React.FC = () => {
   const [isButtonLoading, setIsButtonLoading] = useState(false);
@@ -11,22 +15,15 @@ const SignUpForm: React.FC = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const signUp = async (): Promise<void> => {
+  const { signUp } = React.useContext(AuthContext);
+
+  const navigation = useNavigation<Props>();
+
+  const submit = async ():Promise<void> => {
     setIsButtonLoading(true);
-
-    try {
-      await fetch
-        .catcher(409, () => {
-          showToast('Identifiant déjà utilisé', 'Veuillez choisir un autre identifiant', 'error');
-        })
-        .post('/auth/register', { body: { password, username } });
-    } catch (err) {
-      return;
-    } finally {
-      setIsButtonLoading(false);
-    }
-
-    showToast('Compte créé avec succès', 'Essayez de vous connecter sur la page de connexion', 'success');
+    await signUp(password, username);
+    setIsButtonLoading(false);
+    navigation.replace('SignIn', { username });
   };
 
   const errorMessage = confirmPassword !== password && confirmPassword !== ''
@@ -47,6 +44,7 @@ const SignUpForm: React.FC = () => {
           />
         )}
         placeholder="Nom d'utilisateur"
+        value={username}
         onChangeText={(value): void => { setUsername(value); }}
       />
       <Input
@@ -61,6 +59,7 @@ const SignUpForm: React.FC = () => {
           />
         )}
         placeholder="Min. 8 caractères"
+        value={password}
         onChangeText={(value): void => { setPassword(value); }}
       />
       <Input
@@ -77,6 +76,7 @@ const SignUpForm: React.FC = () => {
           />
         )}
         placeholder="Confirmez le mot de passe"
+        value={confirmPassword}
         onChangeText={(value): void => { setConfirmPassword(value); }}
       />
       <Button
@@ -88,7 +88,7 @@ const SignUpForm: React.FC = () => {
         disabled={!username || !password || !confirmPassword}
         loading={isButtonLoading}
         title="S'inscrire"
-        onPress={async ():Promise<void> => { await signUp(); }}
+        onPress={async ():Promise<void> => { await submit(); }}
       />
     </View>
   );

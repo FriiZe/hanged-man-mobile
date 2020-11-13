@@ -1,6 +1,6 @@
 type UnsignedRoutes = {
   SignUp: undefined;
-  SignIn: undefined;
+  SignIn: { username: string } | undefined;
   Home: undefined;
 };
 

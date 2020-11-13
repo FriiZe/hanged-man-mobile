@@ -2,9 +2,27 @@ import React, { useState } from 'react';
 import { View } from 'react-native';
 import { Button, Icon, Input } from 'react-native-elements';
 
-const SignInForm = (): JSX.Element => {
-  const [username, setUsername] = useState('');
+import AuthContext from '../helpers/AuthContext';
+
+interface Props {
+  username?: string
+}
+
+const SignInForm: React.FC<Props> = ({ username: us }) => {
+  const [username, setUsername] = useState(us ?? '');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { signIn } = React.useContext(AuthContext);
+
+  const submit = async (): Promise<void> => {
+    setIsLoading(true);
+    try {
+      await signIn(password, username);
+    } catch (err) {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <View style={{ alignSelf: 'center', width: '80%' }}>
@@ -18,6 +36,7 @@ const SignInForm = (): JSX.Element => {
           />
         )}
         placeholder="Nom d'utilisateur"
+        value={username}
         onChangeText={(value): void => { setUsername(value); }}
       />
       <Input
@@ -30,6 +49,8 @@ const SignInForm = (): JSX.Element => {
             type="ionicon"
           />
         )}
+        placeholder="Mot de passe"
+        value={password}
         onChangeText={(value): void => { setPassword(value); }}
       />
       <Button
@@ -39,8 +60,9 @@ const SignInForm = (): JSX.Element => {
           width: '70%',
         }}
         disabled={!username || !password}
+        loading={isLoading}
         title="Se connecter"
-        onPress={():void => {}}
+        onPress={async ():Promise<void> => { await submit(); }}
       />
     </View>
   );
