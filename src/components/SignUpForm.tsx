@@ -20,7 +20,6 @@ const SignUpForm: React.FC = () => {
           showToast('Identifiant déjà utilisé', 'Veuillez choisir un autre identifiant', 'error');
         })
         .post('/auth/register', { body: { password, username } });
-    // eslint-disable-next-line no-empty
     } catch (err) {
       return;
     } finally {
