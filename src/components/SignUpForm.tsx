@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { View } from 'react-native';
 import { Button, Icon, Input } from 'react-native-elements';
 
+import fetch from '../utils/fetch';
 import showToast from '../utils/showToast';
-import wretch from '../utils/wretch';
 
 const SignUpForm: React.FC = () => {
   const [isButtonLoading, setIsButtonLoading] = useState(false);
@@ -14,23 +14,20 @@ const SignUpForm: React.FC = () => {
   const signUp = async (): Promise<void> => {
     setIsButtonLoading(true);
 
-    // TODO
     try {
-      await wretch
-        .url('/auth/register')
+      await fetch
         .catcher(409, () => {
           showToast('Identifiant déjà utilisé', 'Veuillez choisir un autre identifiant', 'error');
         })
-        .post({ password, username })
-        .catch((_err) => {
-          console.log(_err);
-          showToast('Une erreur s\'est produite', 'Ça vient de chez nous, comme le bon goût', 'error');
-        });
-      showToast('Compte créé avec succès', 'Essayez de vous connecter sur la page de connection', 'success');
+        .post('/auth/register', { body: { password, username } });
+    // eslint-disable-next-line no-empty
     } catch (err) {
-      showToast('Une erreur s\'est produite', 'Ça vient de chez nous, comme le bon goût', 'error');
+      return;
+    } finally {
+      setIsButtonLoading(false);
     }
-    setIsButtonLoading(false);
+
+    showToast('Compte créé avec succès', 'Essayez de vous connecter sur la page de connexion', 'success');
   };
 
   const errorMessage = confirmPassword !== password && confirmPassword !== ''
