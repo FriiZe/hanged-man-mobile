@@ -2,25 +2,34 @@ export type AuthEndpoint = '/auth';
 
 export type AuthRoutes = {
   '/login': {
-    method: 'post',
-    response: {
-      token: string,
+    'get': never,
+    'post': {
+      response: {
+        token: string,
+      },
+      parameters: {
+        body: {
+          username: string,
+          password: string,
+        },
+      }
     },
-    parameters: {
-      body: {
-        username: string,
-        password: string,
-      },
-    }
-  },
+    'patch': never,
+    'delete': never,
+  }
   '/register': {
-    method: 'post',
-    parameters: {
-      body: {
-        username: string,
-        password: string,
-      },
-    }
-    response: void
+    'get': never,
+    'post': {
+      response: void,
+      parameters: {
+        body: {
+          username: string,
+          password: string,
+        },
+      }
+    },
+    'patch': never,
+    'delete': never,
+
   }
 };

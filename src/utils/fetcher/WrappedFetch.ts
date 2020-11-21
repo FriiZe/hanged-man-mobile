@@ -1,7 +1,6 @@
 /* eslint-disable no-underscore-dangle */
-import type { Routes } from './routes';
 import type {
-  EndpointsByMethod, GroupedEndpoints, PostEndpoints, ResponseType,
+  EndpointsByMethod, Method, ParametersType, PostEndpoints, ResponseType,
 } from './types';
 
 class WrappedFetch {
@@ -32,18 +31,18 @@ class WrappedFetch {
 
   public async post<E extends PostEndpoints = PostEndpoints>(
     endpoint: E
-  ): Promise<ResponseType<E>>;
+  ): Promise<ResponseType<E, 'post'>>;
 
   public async post<E extends PostEndpoints = PostEndpoints>(
     endpoint: E,
-    options: Routes[E]['parameters'],
-  ): Promise<ResponseType<E>>;
+    parameters: ParametersType<PostEndpoints, 'post'>,
+  ): Promise<ResponseType<E, 'post'>>;
 
   public async post<E extends PostEndpoints = PostEndpoints>(
     endpoint: E,
-    options?: Routes[E]['parameters'],
-  ): Promise<ResponseType<E>> {
-    const body = (options?.body !== undefined) ? JSON.stringify(options.body) : null;
+    parameters?: ParametersType<E, 'post'>,
+  ): Promise<ResponseType<E, 'post'>> {
+    const body = (parameters?.body !== undefined) ? JSON.stringify(parameters.body) : null;
     const response = await fetch(`${this.url}${endpoint}`, { body, headers: this._headers, method: 'post' });
 
     await this.handleError(response);
@@ -59,11 +58,11 @@ class WrappedFetch {
     }
   }
 
-  private static async unwrapResponse<E extends EndpointsByMethod<keyof GroupedEndpoints>>(
+  private static async unwrapResponse<E extends EndpointsByMethod<Method>>(
     response: Response,
-  ): Promise<ResponseType<E>> {
+  ): Promise<ResponseType<E, Method>> {
     try {
-      return await response.json() as unknown as ResponseType<E>;
+      return await response.json() as unknown as ResponseType<E, Method>;
     } catch (err) {
       return Promise.resolve();
     }
