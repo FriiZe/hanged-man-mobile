@@ -1,0 +1,21 @@
+diff --git a/node_modules/@types/react-native-vector-icons/Icon.d.ts b/node_modules/@types/react-native-vector-icons/Icon.d.ts
+index dac3287..26c6af4 100644
+--- a/node_modules/@types/react-native-vector-icons/Icon.d.ts
++++ b/node_modules/@types/react-native-vector-icons/Icon.d.ts
+@@ -8,6 +8,7 @@ import {
+   TabBarIOSItemProps,
+   ToolbarAndroidProps as ReactNativeToolbarAndroidProps
+ } from 'react-native';
++import IconName from '../../../src/utils/iconNames';
+ 
+ export interface IconProps extends TextProps {
+   /**
+@@ -23,7 +24,7 @@ export interface IconProps extends TextProps {
+    * See Icon Explorer app
+    * {@link https://github.com/oblador/react-native-vector-icons/tree/master/Examples/IconExplorer}
+    */
+-  name: string;
++  name: IconName;
+ 
+   /**
+    * Color of the icon
