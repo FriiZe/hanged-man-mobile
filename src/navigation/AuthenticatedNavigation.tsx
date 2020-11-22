@@ -12,7 +12,6 @@ import CompleteProfileOverlay from '../components/CompleteProfileOverlay';
 import type { SignedRoutes } from '../routes';
 import GameScreen from '../screens/GameScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-import SignedHomeScreen from '../screens/SignedHomeScreen';
 import fetch from '../utils/fetch';
 
 const AuthenticatedNavigation: React.FC = () => {
@@ -36,8 +35,7 @@ const AuthenticatedNavigation: React.FC = () => {
 
   return (
     <NavigationContainer>
-      <Tab.Navigator>
-        <Tab.Screen component={SignedHomeScreen} name="SignedHome" options={{ title: 'Accueil' }} />
+      <Tab.Navigator lazy initialRouteName="Game">
         <Tab.Screen component={ProfileScreen} name="Profile" options={{ title: 'Profil' }} />
         <Tab.Screen component={GameScreen} name="Game" options={{ title: 'Jouer' }} />
       </Tab.Navigator>
