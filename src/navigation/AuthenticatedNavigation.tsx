@@ -10,9 +10,9 @@ import Toast from 'react-native-toast-message';
 
 import CompleteProfileOverlay from '../components/CompleteProfileOverlay';
 import type { SignedRoutes } from '../routes';
-import GameScreen from '../screens/GameScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import fetch from '../utils/fetch';
+import RoomsNavigation from './RoomsNavigation';
 
 const AuthenticatedNavigation: React.FC = () => {
   const [isProfileCompleted, setIsProfileCompleted] = useState(true);
@@ -37,7 +37,7 @@ const AuthenticatedNavigation: React.FC = () => {
     <NavigationContainer>
       <Tab.Navigator lazy initialRouteName="Game">
         <Tab.Screen component={ProfileScreen} name="Profile" options={{ title: 'Profil' }} />
-        <Tab.Screen component={GameScreen} name="Game" options={{ title: 'Jouer' }} />
+        <Tab.Screen component={RoomsNavigation} name="Game" options={{ title: 'Jouer' }} />
       </Tab.Navigator>
       { !isProfileCompleted ? <CompleteProfileOverlay isNewPlayer /> : null}
       <Toast ref={(ref: unknown) => Toast.setRef(ref)} />

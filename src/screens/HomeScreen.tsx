@@ -12,13 +12,13 @@ type Props = StackScreenProps<UnsignedRoutes, 'Home'>;
 const HomeScreen: React.FC<Props> = ({ navigation }) => (
   <View style={{ flex: 1, justifyContent: 'center' }}>
     <Button
-      buttonStyle={{ alignSelf: 'center', marginBottom: 10 }}
+      buttonStyle={{ alignSelf: 'center', marginBottom: '3%' }}
       title="Inscription"
       onPress={(): void => navigation.push('SignUp')}
     />
     <Button
       buttonStyle={{
-        alignSelf: 'center', marginBottom: 10,
+        alignSelf: 'center',
       }}
       title="Connexion"
       onPress={(): void => navigation.push('SignIn')}

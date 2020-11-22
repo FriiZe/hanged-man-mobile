@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator, ScrollView, View,
 } from 'react-native';
-import { Button, Text } from 'react-native-elements';
+import { Button } from 'react-native-elements';
 
+import CreateRoomOverlay from '../components/CreateRoomOverlay';
 import RoomCard from '../components/RoomCard';
 import fetch from '../utils/fetch';
 
@@ -14,9 +15,14 @@ interface Room {
   players: string[];
 }
 
-const GameScreen : React.FC = () => {
+const RoomsScreen : React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isOverlayVisible, setIsOverlayVisible] = useState(false);
   const [rooms, setRooms] = useState<Room[]>([]);
+
+  const toggleOverlay = (): void => {
+    setIsOverlayVisible(!isOverlayVisible);
+  };
 
   const getAllRooms = async (): Promise<void> => {
     try {
@@ -37,7 +43,6 @@ const GameScreen : React.FC = () => {
       alignItems: 'center',
       flex: 1,
       justifyContent: 'center',
-      marginTop: 70,
     }}
     >
       {
@@ -45,8 +50,7 @@ const GameScreen : React.FC = () => {
           ? <ActivityIndicator color="#0000ff" size="large" />
           : (
             <View style={{ bottom: 0, width: '90%' }}>
-              <Text h3 style={{ alignItems: 'center' }}>Jouer une partie</Text>
-              <ScrollView style={{ marginTop: 20, maxHeight: '75%' }}>
+              <ScrollView style={{ marginTop: '5%', maxHeight: '80%' }}>
                 {rooms.map(
                   (room) => (
                     <RoomCard
@@ -60,18 +64,26 @@ const GameScreen : React.FC = () => {
                 )}
               </ScrollView>
               <Button
-                style={{ marginTop: 20 }}
+                buttonStyle={{ marginTop: '5%' }}
                 title="Creer une partie"
+                onPress={(): void => toggleOverlay()}
               />
               <Button
-                style={{ marginTop: 20 }}
+                buttonStyle={{ marginTop: '5%' }}
                 title="Rafraichir"
                 onPress={async (): Promise<void> => { await getAllRooms(); }}
               />
             </View>
           )
       }
+      {isOverlayVisible
+        ? (
+          <CreateRoomOverlay
+            onBackdropPress={toggleOverlay}
+          />
+        )
+        : null}
     </View>
   );
 };
-export default GameScreen;
+export default RoomsScreen;

@@ -58,7 +58,7 @@ const SignInForm: React.FC<Props> = ({ username: us }) => {
       <Button
         buttonStyle={{
           alignSelf: 'center',
-          marginTop: 10,
+          marginTop: '5%',
           width: '70%',
         }}
         disabled={!username || !password}

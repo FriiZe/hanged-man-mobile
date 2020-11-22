@@ -1,6 +1,7 @@
 {
   "main": "src/App.tsx",
   "private": true,
+  "name": "hanged-man-mobile",
   "scripts": {
     "lint": "eslint --fix --ext ts,tsx src",
     "start": "expo start",
