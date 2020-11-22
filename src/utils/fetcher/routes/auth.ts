@@ -17,6 +17,15 @@ export type AuthRoutes = {
     'patch': never,
     'delete': never,
   }
+  '/:id': {
+    'get': {
+      response: { name: string },
+      parameters: never,
+    },
+    'post': never,
+    'patch': never,
+    'delete': never
+  },
   '/register': {
     'get': never,
     'post': {

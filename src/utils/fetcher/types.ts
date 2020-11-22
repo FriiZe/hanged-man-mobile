@@ -6,6 +6,13 @@ type Filter<T, V = never> = {
   [K in keyof T as (T[K] extends V ? never & string : K)]: T[K]
 };
 
+type Params<Path extends string> =
+  Path extends `${infer _Start}:${infer Param}/${infer Rest}`
+    ? { [k in Param | keyof Params<Rest>]: string }
+    : Path extends `${infer _Start}:${infer Param}`
+      ? { [k in Param]: string }
+      : Record<string, string>;
+
 type GroupedEndpoints = {
   [E in Endpoint as keyof Filter<Routes[E]>]: E
 };

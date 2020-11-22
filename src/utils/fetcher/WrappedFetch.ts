@@ -1,8 +1,4 @@
 /* eslint-disable no-underscore-dangle */
-import type {
-  EndpointsByMethod, Method, ParametersType, PostEndpoints, ResponseType,
-} from './types';
-
 class WrappedFetch {
   private _headers: Record<string, string> = {};
 
@@ -29,21 +25,32 @@ class WrappedFetch {
     return this;
   }
 
-  public async post<E extends PostEndpoints = PostEndpoints>(
-    endpoint: E
-  ): Promise<ResponseType<E, 'post'>>;
+  public async get<T>(route: string): Promise<T> {
+    const response = await fetch(route, { method: 'get' });
 
-  public async post<E extends PostEndpoints = PostEndpoints>(
-    endpoint: E,
-    parameters: ParametersType<PostEndpoints, 'post'>,
-  ): Promise<ResponseType<E, 'post'>>;
+    await this.handleError(response);
 
-  public async post<E extends PostEndpoints = PostEndpoints>(
-    endpoint: E,
-    parameters?: ParametersType<E, 'post'>,
-  ): Promise<ResponseType<E, 'post'>> {
-    const body = (parameters?.body !== undefined) ? JSON.stringify(parameters.body) : null;
-    const response = await fetch(`${this.url}${endpoint}`, { body, headers: this._headers, method: 'post' });
+    return WrappedFetch.unwrapResponse(response);
+  }
+
+  public async post<T = void, B = Record<string, unknown>>(route: string, body?: B): Promise<T> {
+    const response = await fetch(route, { body: JSON.stringify(body), method: 'post' });
+
+    await this.handleError(response);
+
+    return WrappedFetch.unwrapResponse(response);
+  }
+
+  public async patch<T = void, B = Record<string, unknown>>(route: string, body: B): Promise<T> {
+    const response = await fetch(route, { body: JSON.stringify(body), method: 'patch' });
+
+    await this.handleError(response);
+
+    return WrappedFetch.unwrapResponse(response);
+  }
+
+  public async delete(route: string): Promise<void> {
+    const response = await fetch(route, { method: 'delete' });
 
     await this.handleError(response);
 
@@ -58,13 +65,11 @@ class WrappedFetch {
     }
   }
 
-  private static async unwrapResponse<E extends EndpointsByMethod<Method>>(
-    response: Response,
-  ): Promise<ResponseType<E, Method>> {
+  private static async unwrapResponse<T = void>(response: Response): Promise<T> {
     try {
-      return await response.json() as unknown as ResponseType<E, Method>;
+      return await response.json() as unknown as T;
     } catch (err) {
-      return Promise.resolve();
+      return Promise.resolve() as unknown as T;
     }
   }
 }

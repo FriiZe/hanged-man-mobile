@@ -9,7 +9,8 @@ const signIn = async (username: string, password:string): Promise<string> => {
     .catcher(404, () => {
       showToast('Utilisateur non trouvé', 'Va t\'inscrire genre fissa', 'error');
     })
-    .post('/auth/login', { body: { password, username } });
+    .post<{token: string}>('/auth/login', { password, username });
+
   return res.token;
 };
 
