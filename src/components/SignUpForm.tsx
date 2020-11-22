@@ -21,7 +21,7 @@ const SignUpForm: React.FC = () => {
 
   const submit = async ():Promise<void> => {
     setIsButtonLoading(true);
-    await signUp(password, username);
+    await signUp(username, password);
     setIsButtonLoading(false);
     navigation.replace('SignIn', { username });
   };
@@ -35,6 +35,7 @@ const SignUpForm: React.FC = () => {
   return (
     <View style={{ alignSelf: 'center', width: '80%' }}>
       <Input
+        autoCapitalize="none"
         label="Nom d'utilisateur"
         leftIcon={(
           <Icon
@@ -49,6 +50,7 @@ const SignUpForm: React.FC = () => {
       />
       <Input
         secureTextEntry
+        autoCapitalize="none"
         errorMessage={validator}
         label="Mot de passe"
         leftIcon={(
@@ -65,6 +67,7 @@ const SignUpForm: React.FC = () => {
       <Input
         renderErrorMessage
         secureTextEntry
+        autoCapitalize="none"
         disabled={password.length < 8}
         errorMessage={errorMessage}
         label="Confirmation"

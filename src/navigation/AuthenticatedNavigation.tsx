@@ -5,16 +5,34 @@
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Toast from 'react-native-toast-message';
 
+import CompleteProfileOverlay from '../components/CompleteProfileOverlay';
 import type { SignedRoutes } from '../routes';
 import GameScreen from '../screens/GameScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SignedHomeScreen from '../screens/SignedHomeScreen';
+import fetch from '../utils/fetch';
 
 const AuthenticatedNavigation: React.FC = () => {
+  const [isProfileCompleted, setIsProfileCompleted] = useState(true);
   const Tab = createBottomTabNavigator<SignedRoutes>();
+
+  const isPlayerProfileCompleted = async (): Promise<void> => {
+    try {
+      await fetch
+        .catcher(404, () => {
+          setIsProfileCompleted(false);
+        })
+        .get('/players/me');
+    // eslint-disable-next-line no-empty
+    } catch (err) {}
+  };
+
+  useEffect(() => {
+    void isPlayerProfileCompleted();
+  }, []);
 
   return (
     <NavigationContainer>
@@ -23,6 +41,7 @@ const AuthenticatedNavigation: React.FC = () => {
         <Tab.Screen component={ProfileScreen} name="Profile" options={{ title: 'Profil' }} />
         <Tab.Screen component={GameScreen} name="Game" options={{ title: 'Jouer' }} />
       </Tab.Navigator>
+      { !isProfileCompleted ? <CompleteProfileOverlay isNewPlayer /> : null}
       <Toast ref={(ref: unknown) => Toast.setRef(ref)} />
     </NavigationContainer>
   );

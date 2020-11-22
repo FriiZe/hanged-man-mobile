@@ -18,7 +18,7 @@ const SignInForm: React.FC<Props> = ({ username: us }) => {
   const submit = async (): Promise<void> => {
     setIsLoading(true);
     try {
-      await signIn(password, username);
+      await signIn(username, password);
     } catch (err) {
       setIsLoading(false);
     }
@@ -27,6 +27,7 @@ const SignInForm: React.FC<Props> = ({ username: us }) => {
   return (
     <View style={{ alignSelf: 'center', width: '80%' }}>
       <Input
+        autoCapitalize="none"
         label="Nom d'utilisateur"
         leftIcon={(
           <Icon
@@ -41,6 +42,7 @@ const SignInForm: React.FC<Props> = ({ username: us }) => {
       />
       <Input
         secureTextEntry
+        autoCapitalize="none"
         label="Mot de passe"
         leftIcon={(
           <Icon

@@ -7,7 +7,7 @@ const signUp = async (username: string, password: string): Promise<void> => {
       .catcher(409, () => {
         showToast('Identifiant déjà utilisé', 'Veuillez choisir un autre identifiant', 'error');
       })
-      .post('/auth/register', { body: { password, username } });
+      .post('/auth/register', { password, username });
   // eslint-disable-next-line no-empty
   } catch (err) {}
 

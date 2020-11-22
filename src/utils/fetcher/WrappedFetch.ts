@@ -1,3 +1,5 @@
+import AsyncStorage from '@react-native-community/async-storage';
+
 /* eslint-disable no-underscore-dangle */
 class WrappedFetch {
   private _headers: Record<string, string> = {};
@@ -20,13 +22,23 @@ class WrappedFetch {
     return this;
   }
 
+  private async putBearerToken(): Promise<Record<string, string>> {
+    const baseHeaders = this._headers;
+    const token = await AsyncStorage.getItem('userToken');
+    if (token) {
+      baseHeaders.Authorization = `Bearer ${token}`;
+    }
+    return baseHeaders;
+  }
+
   public defaultCatcher(handler: () => void): WrappedFetch {
     this._defaultCatcher = handler;
     return this;
   }
 
   public async get<T>(route: string): Promise<T> {
-    const response = await fetch(route, { method: 'get' });
+    const headers = await this.putBearerToken();
+    const response = await fetch(this.url + route, { headers, method: 'get' });
 
     await this.handleError(response);
 
@@ -34,15 +46,17 @@ class WrappedFetch {
   }
 
   public async post<T = void, B = Record<string, unknown>>(route: string, body?: B): Promise<T> {
-    const response = await fetch(route, { body: JSON.stringify(body), method: 'post' });
-
+    const headers = await this.putBearerToken();
+    const response = await fetch(this.url + route, { body: JSON.stringify(body), headers, method: 'post' });
     await this.handleError(response);
 
     return WrappedFetch.unwrapResponse(response);
   }
 
   public async patch<T = void, B = Record<string, unknown>>(route: string, body: B): Promise<T> {
-    const response = await fetch(route, { body: JSON.stringify(body), method: 'patch' });
+    const headers = await this.putBearerToken();
+
+    const response = await fetch(this.url + route, { body: JSON.stringify(body), headers, method: 'patch' });
 
     await this.handleError(response);
 
@@ -50,7 +64,9 @@ class WrappedFetch {
   }
 
   public async delete(route: string): Promise<void> {
-    const response = await fetch(route, { method: 'delete' });
+    const headers = await this.putBearerToken();
+
+    const response = await fetch(this.url + route, { headers, method: 'delete' });
 
     await this.handleError(response);
 

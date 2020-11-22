@@ -35,20 +35,20 @@ const Navigation : React.FC = () => {
     }
   }, { isLoading: true, token: null });
 
+  const getToken = async (): Promise<void> => {
+    let token: string | null = null;
+    try {
+      token = await AsyncStorage.getItem('userToken');
+    } catch (err) {
+      dispatch({ type: 'LOG_OUT' });
+      showToast('Vous avez été déconnecté', 'Reconnectez-vous manuellement', 'info');
+    }
+    if (token !== null) dispatch({ token, type: 'RESTORE_TOKEN' });
+    else {
+      dispatch({ type: 'LOG_OUT' });
+    }
+  };
   useEffect(() => {
-    const getToken = async (): Promise<void> => {
-      let token: string | null = null;
-      try {
-        token = await AsyncStorage.getItem('userToken');
-      } catch (err) {
-        dispatch({ type: 'LOG_OUT' });
-        showToast('Vous avez été déconnecté', 'Reconnectez-vous manuellement', 'info');
-      }
-      if (token !== null) dispatch({ token, type: 'RESTORE_TOKEN' });
-      else {
-        dispatch({ type: 'LOG_OUT' });
-      }
-    };
     void getToken();
   }, []);
 
