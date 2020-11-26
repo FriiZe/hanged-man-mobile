@@ -9,37 +9,35 @@ import {
 
 import type { RoomsRoutes } from '../routes';
 import fetch from '../utils/fetch';
+import showToast from '../utils/showToast';
 
 interface Props {
   onBackdropPress: () => void
+  roomId: string
 }
 
 type NavigationProps = StackNavigationProp<RoomsRoutes, 'Rooms'>;
 
-const CreateRoomOverlay: React.FC<Props> = ({ onBackdropPress }) => {
-  const [roomName, setRoomName] = useState('');
-  const [code, setCode] = useState<string | undefined>(undefined);
+const CodeOverlay: React.FC<Props> = ({ onBackdropPress, roomId }) => {
+  const [code, setCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const navigation = useNavigation<NavigationProps>();
 
   const submit = async (): Promise<void> => {
     setIsLoading(true);
-    let roomId: string | null = null;
     try {
-      const { id } = await fetch.post<{id: string}>('/rooms', { code, name: roomName });
-      roomId = id;
-    } catch (err) {
-      setIsLoading(false);
-    }
-    setIsLoading(false);
-    onBackdropPress();
-    if (roomId) {
+      await fetch
+        .catcher(403, () => { showToast('Le code est erroné', 'Demande le code au créateur du salon ou aux devs', 'error'); })
+        .post(`/rooms/${roomId}/join`, { code });
+      onBackdropPress();
       navigation.push('Lobby', { roomId });
-    }
+    // eslint-disable-next-line no-empty
+    } catch (error) {}
+    setIsLoading(false);
   };
 
-  const codeValidator = code?.length && code?.length !== 4 ? '4 caractères' : '';
+  const codeValidator = code.length === 4 || code.length === 0 ? '' : '4 caractères';
 
   return (
     <View>
@@ -50,20 +48,6 @@ const CreateRoomOverlay: React.FC<Props> = ({ onBackdropPress }) => {
       >
         <View>
           <Text h4 style={{ marginBottom: '10%', marginTop: '5%' }}>Créer une partie</Text>
-          <Input
-            autoCapitalize="none"
-            label="Nom"
-            leftIcon={(
-              <Icon
-                color="#adb5bd"
-                name="ios-text"
-                type="ionicon"
-              />
-            )}
-            placeholder="Nom de la partie"
-            value={roomName}
-            onChangeText={(value): void => { setRoomName(value); }}
-          />
           <Input
             secureTextEntry
             errorMessage={codeValidator}
@@ -76,12 +60,12 @@ const CreateRoomOverlay: React.FC<Props> = ({ onBackdropPress }) => {
                 type="ionicon"
               />
             )}
-            placeholder="4 chiffres (optionnel)"
+            placeholder="4 chiffres"
             value={code}
             onChangeText={(value): void => { setCode(value); }}
           />
           <Button
-            disabled={!roomName || !!(code?.length && code?.length !== 4)}
+            disabled={!(code.length === 4)}
             loading={isLoading}
             title="Confirmer"
             onPress={async ():Promise<void> => { await submit(); }}
@@ -92,4 +76,4 @@ const CreateRoomOverlay: React.FC<Props> = ({ onBackdropPress }) => {
   );
 };
 
-export default CreateRoomOverlay;
+export default CodeOverlay;

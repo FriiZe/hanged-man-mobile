@@ -1,11 +1,12 @@
 import { useNavigation } from '@react-navigation/native';
 import type { StackNavigationProp } from '@react-navigation/stack';
-import React from 'react';
+import React, { useState } from 'react';
 import { Text } from 'react-native';
 import { Icon, ListItem } from 'react-native-elements';
 
 import type { RoomsRoutes } from '../routes';
 import fetch from '../utils/fetch';
+import CodeOverlay from './CodeOverlay';
 
 interface Props {
   id: string;
@@ -20,19 +21,30 @@ const RoomCard: React.FC<Props> = ({
   id, name, isPublic, players,
 }) => {
   const navigation = useNavigation<NavigationProps>();
+  const [showCodeOverlay, setShowCodeOverlay] = useState(false);
 
   const joinRoom = async (roomId: string): Promise<void> => {
     try {
-      await fetch.post(`/rooms/join/${roomId}`);
+      await fetch.post(`/rooms/${roomId}/join`);
       navigation.push('Lobby', { roomId });
       // eslint-disable-next-line no-empty
     } catch {}
   };
 
+  const toggleOverlay = (): void => {
+    setShowCodeOverlay(!showCodeOverlay);
+  };
+
   return (
     <ListItem
       style={{ marginTop: '3%' }}
-      onPress={async (): Promise<void> => { await joinRoom(id); }}
+      onPress={async (): Promise<void> => {
+        if (!isPublic) {
+          toggleOverlay();
+        } else {
+          await joinRoom(id);
+        }
+      }}
     >
       {isPublic ? null : (
         <Icon
@@ -56,6 +68,16 @@ const RoomCard: React.FC<Props> = ({
         </ListItem.Subtitle>
       </ListItem.Content>
       <ListItem.Chevron color="black" />
+      {
+        showCodeOverlay
+          ? (
+            <CodeOverlay
+              roomId={id}
+              onBackdropPress={toggleOverlay}
+            />
+          )
+          : null
+      }
     </ListItem>
   );
 };

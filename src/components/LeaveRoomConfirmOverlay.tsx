@@ -29,12 +29,11 @@ const LeaveRoomConfirmOverlay: React.FC<Props> = ({
     setIsLoading(true);
     try {
       if (event) {
-        await fetch.post(`/rooms/leave/${roomId}`);
+        await fetch.post(`/rooms/${roomId}/leave`);
         navigation.dispatch(event.data.action);
       }
     // eslint-disable-next-line no-empty
     } catch {}
-    onBackdropPress();
     setIsLoading(false);
   };
 
