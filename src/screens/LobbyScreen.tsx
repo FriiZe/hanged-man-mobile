@@ -2,9 +2,12 @@ import type { StackScreenProps } from '@react-navigation/stack';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, View } from 'react-native';
 import { ListItem } from 'react-native-elements';
+import { useSelector } from 'react-redux';
 
 import LeaveRoomConfirmOverlay from '../components/LeaveRoomConfirmOverlay';
+import useClient from '../hooks/useClient';
 import type { RoomsRoutes } from '../routes';
+import { selectToken } from '../store/reducers/auth';
 import fetch from '../utils/fetch';
 import type { BeforeRemoveEvent } from '../utils/types';
 
@@ -15,12 +18,7 @@ type Props = StackScreenProps<RoomsRoutes, 'Lobby'>;
   * create socket when join
   * emit event room({roomId})
   * listen event player-joined({playerId})
-  * validator on codeRoom
   * listen event player-left({playerId})
-  * show all players of a room
-  * listen event when room is created
-  * listen event when room is deleted
-  * ask code when try to join private room
   *
   */
 
@@ -34,6 +32,10 @@ const LobbyScreen : React.FC<Props> = ({ navigation, route }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [roomPlayers, setRoomPlayers] = useState<Player[]>([]);
   const [event, setEvent] = useState<BeforeRemoveEvent | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const token = useSelector(selectToken);
+  const [client] = useClient(token);
+
   const { roomId } = route.params;
 
   const toggleOverlay = (): void => {
@@ -46,6 +48,20 @@ const LobbyScreen : React.FC<Props> = ({ navigation, route }) => {
     // eslint-disable-next-line no-empty
     } catch (err) {}
   };
+
+  const getPlayer = async (playerId: string): Promise<void> => {
+    const result = await fetch.get<Player>(`/players/${playerId}`);
+    setRoomPlayers([...roomPlayers, result]);
+  };
+
+  const deletePlayer = (playerId: string): void => {
+    const updatedPlayers = roomPlayers.filter((player) => playerId !== player.id);
+    setRoomPlayers(updatedPlayers);
+  };
+
+  client?.on('player-joined', async ({ playerId }) => { await getPlayer(playerId); });
+
+  client?.on('player-left', ({ playerId }) => { deletePlayer(playerId); });
 
   useEffect(
     () => {
@@ -60,6 +76,7 @@ const LobbyScreen : React.FC<Props> = ({ navigation, route }) => {
   useEffect(() => {
     setIsLoading(true);
     void getAllRoomPlayers();
+    client?.emit('room', roomId);
     setIsLoading(false);
   }, []);
 
