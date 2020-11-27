@@ -3,9 +3,12 @@ import {
   ActivityIndicator, ScrollView, View,
 } from 'react-native';
 import { Button } from 'react-native-elements';
+import { useSelector } from 'react-redux';
 
 import CreateRoomOverlay from '../components/CreateRoomOverlay';
 import RoomCard from '../components/RoomCard';
+import useClient from '../hooks/useClient';
+import { selectToken } from '../store/reducers/auth';
 import fetch from '../utils/fetch';
 
 interface Room {
@@ -19,6 +22,24 @@ const RoomsScreen : React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
   const [rooms, setRooms] = useState<Room[]>([]);
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const token = useSelector(selectToken);
+  const [client] = useClient(token);
+
+  const getRoom = async (roomId: string): Promise<void> => {
+    const result = await fetch.get<Room>(`/rooms/${roomId}`);
+    setRooms([...rooms, result]);
+  };
+
+  const deleteRoom = (roomId: string): void => {
+    const updatedRooms = rooms.filter((room) => roomId !== room.id);
+    setRooms(updatedRooms);
+  };
+
+  client?.on('room-created', async ({ roomId }) => { await getRoom(roomId); });
+
+  client?.on('room-deleted', ({ roomId }) => { deleteRoom(roomId); });
 
   const toggleOverlay = (): void => {
     setIsOverlayVisible(!isOverlayVisible);
@@ -67,11 +88,6 @@ const RoomsScreen : React.FC = () => {
                 buttonStyle={{ marginTop: '5%' }}
                 title="Creer une partie"
                 onPress={(): void => toggleOverlay()}
-              />
-              <Button
-                buttonStyle={{ marginTop: '5%' }}
-                title="Rafraichir"
-                onPress={async (): Promise<void> => { await getAllRooms(); }}
               />
             </View>
           )
