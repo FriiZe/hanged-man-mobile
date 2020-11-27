@@ -25,7 +25,7 @@ const AuthenticatedNavigation: React.FC = () => {
           setIsProfileCompleted(false);
         })
         .get('/players/me');
-    // eslint-disable-next-line no-empty
+      // eslint-disable-next-line no-empty
     } catch (err) {}
   };
 
