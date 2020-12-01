@@ -21,22 +21,31 @@ const initialState: State = {
   isLoading: false,
 };
 
-export const fetchPlayer = createAsyncThunk('player/fetchPlayer', async () => {
-  try {
-    return await fetch.get<Omit<State, 'isLoading'>>('/players/me');
-  // eslint-disable-next-line no-empty
-  } catch (err) {
-    return initialState;
-  }
-});
+export const fetchPlayer = createAsyncThunk('player/fetchPlayer', () => fetch.get<Omit<State, 'isLoading'>>('/players/me'));
+
+export const createPlayer = createAsyncThunk('player/createPlayer', (displayName: string) => fetch.post<Omit<State, 'isLoading'>>('/players', { displayName }));
+
+export const updatePlayer = createAsyncThunk('player/updatePlayer', (displayName: string) => fetch.patch<Omit<State, 'isLoading'>>('/players/me', { displayName }));
 
 const playerSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchPlayer.pending, (state) => ({ ...state, isLoading: true }));
-    builder.addCase(fetchPlayer.fulfilled, (state, action: PayloadAction<Omit<State, 'isLoading'>>) => (
+    builder.addCase(fetchPlayer.fulfilled, (_, action: PayloadAction<Omit<State, 'isLoading'>>) => (
       { ...action.payload, isLoading: false }
     ));
     builder.addCase(fetchPlayer.rejected, (state) => ({ ...state, isLoading: false }));
+
+    builder.addCase(createPlayer.pending, (state) => ({ ...state, isLoading: true }));
+    builder.addCase(createPlayer.fulfilled, (_, action: PayloadAction<Omit<State, 'isLoading'>>) => (
+      { ...action.payload, isLoading: false }
+    ));
+    builder.addCase(createPlayer.rejected, (state) => ({ ...state, isLoading: false }));
+
+    builder.addCase(updatePlayer.pending, (state) => ({ ...state, isLoading: true }));
+    builder.addCase(updatePlayer.fulfilled, (_, action: PayloadAction<Omit<State, 'isLoading'>>) => (
+      { ...action.payload, isLoading: false }
+    ));
+    builder.addCase(updatePlayer.rejected, (state) => ({ ...state, isLoading: false }));
   },
   initialState,
   name: 'player',
@@ -64,6 +73,11 @@ export const selectIsLoading = (state: {player: State}): boolean => state.player
 export const selectDisplayName = (state: {player: State}): string => state.player.displayName;
 
 export const {
-  incrementWins, joinGame, joinRoom, leaveGame, leaveRoom,
+  incrementWins,
+  joinGame,
+  joinRoom,
+  leaveGame,
+  leaveRoom,
 } = playerSlice.actions;
+
 export const playerReducer = playerSlice.reducer;

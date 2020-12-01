@@ -35,7 +35,7 @@ const AuthenticatedNavigation: React.FC = () => {
         <Tab.Screen component={ProfileScreen} name="Profile" options={{ title: 'Profil' }} />
         <Tab.Screen component={RoomsNavigation} name="Game" options={{ title: 'Jouer' }} />
       </Tab.Navigator>
-      { !isProfileCompleted ? <CompleteProfileOverlay isNewPlayer /> : null}
+      { !isProfileCompleted ? <CompleteProfileOverlay /> : null}
       <Toast ref={(ref: unknown) => Toast.setRef(ref)} />
     </NavigationContainer>
   );

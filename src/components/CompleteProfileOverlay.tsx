@@ -4,35 +4,20 @@ import {
   Button,
   Icon, Input, Overlay, Text,
 } from 'react-native-elements';
+import { useDispatch, useSelector } from 'react-redux';
 
-import fetch from '../utils/fetch';
+import { createPlayer, selectIsLoading } from '../store/slices/player';
 
-interface Props {
-  isNewPlayer?: boolean;
-}
-
-const CompleteProfileOverlay: React.FC<Props> = ({ isNewPlayer = false }) => {
-  const [isVisible, setIsVisible] = useState(true);
+const CompleteProfileOverlay: React.FC = () => {
   const [displayName, setDisplayName] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
 
-  const closeOverlay = (): void => {
+  const dispatch = useDispatch();
+  const isLoading = useSelector(selectIsLoading);
+
+  const submit = (): void => {
+    dispatch(createPlayer(displayName));
     setIsVisible(false);
-  };
-
-  const submit = async (): Promise<void> => {
-    setIsLoading(true);
-    try {
-      if (isNewPlayer) {
-        await fetch.post('/players', { displayName });
-      } else {
-        await fetch.patch('/players/me', { displayName });
-      }
-    } catch (err) {
-      setIsLoading(false);
-    }
-    setIsLoading(false);
-    closeOverlay();
   };
 
   return (
@@ -58,7 +43,7 @@ const CompleteProfileOverlay: React.FC<Props> = ({ isNewPlayer = false }) => {
             disabled={!displayName}
             loading={isLoading}
             title="Confirmer"
-            onPress={async ():Promise<void> => { await submit(); }}
+            onPress={(): void => { submit(); }}
           />
         </View>
       </Overlay>
