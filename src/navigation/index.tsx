@@ -13,7 +13,7 @@ import {
   selectIsLoading,
   selectToken,
   signIn, signOut,
-} from '../store/reducers/auth';
+} from '../store/slices/auth';
 import showToast from '../utils/showToast';
 import AuthenticatedNavigation from './AuthenticatedNavigation';
 import UnauthenticatedNavigation from './UnauthenticatedNavigation';

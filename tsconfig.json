@@ -5,9 +5,12 @@
     "jsx": "react-native",
     "lib": [
       "dom",
-      "esnext"
+      "esnext",
+      "ES2015.Collection",
+      "ES2015.Iterable"
     ],
     "moduleResolution": "node",
+    "downlevelIteration": true,
     "noEmit": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,

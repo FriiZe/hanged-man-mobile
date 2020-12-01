@@ -5,32 +5,28 @@
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Toast from 'react-native-toast-message';
+import { useDispatch, useSelector } from 'react-redux';
 
 import CompleteProfileOverlay from '../components/CompleteProfileOverlay';
 import type { SignedRoutes } from '../routes';
 import ProfileScreen from '../screens/ProfileScreen';
-import fetch from '../utils/fetch';
+import {
+  fetchPlayer, selectDisplayName, selectId,
+} from '../store/slices/player';
 import RoomsNavigation from './RoomsNavigation';
 
 const AuthenticatedNavigation: React.FC = () => {
-  const [isProfileCompleted, setIsProfileCompleted] = useState(true);
   const Tab = createBottomTabNavigator<SignedRoutes>();
-
-  const isPlayerProfileCompleted = async (): Promise<void> => {
-    try {
-      await fetch
-        .catcher(404, () => {
-          setIsProfileCompleted(false);
-        })
-        .get('/players/me');
-      // eslint-disable-next-line no-empty
-    } catch (err) {}
-  };
+  const dispatch = useDispatch();
+  const myPlayerId = useSelector(selectId);
+  const isProfileCompleted = useSelector(selectDisplayName);
 
   useEffect(() => {
-    void isPlayerProfileCompleted();
+    if (myPlayerId === '') {
+      dispatch(fetchPlayer());
+    }
   }, []);
 
   return (

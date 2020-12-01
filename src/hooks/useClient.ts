@@ -1,12 +1,10 @@
 import io from 'socket.io-client';
 
-let client: SocketIOClient.Socket | null = null;
-let tkn: string | null = null;
+let clientByNamespace: Record<string, SocketIOClient.Socket> = {};
 
-const useClient = (token: string): [SocketIOClient.Socket | null] => {
-  if (tkn !== token && token !== null && client === null) {
-    tkn = token;
-    client = io('wss://dev.ws.hanged-man.potb.dev/rooms', {
+const useClient = (token: string | null, namespace: string): [SocketIOClient.Socket | null] => {
+  if (!clientByNamespace[namespace] && token !== null) {
+    const client = io(`wss://dev.ws.hanged-man.potb.dev/${namespace}`, {
       secure: true,
       transportOptions: {
         polling: {
@@ -21,15 +19,17 @@ const useClient = (token: string): [SocketIOClient.Socket | null] => {
         },
       },
     });
+    clientByNamespace[namespace] = client;
   }
 
-  if (token === null && client !== null) {
-    client.disconnect();
-    client = null;
-    tkn = null;
+  if (token === null && clientByNamespace !== {}) {
+    Object.keys(clientByNamespace).forEach((key) => {
+      clientByNamespace[key].disconnect();
+    });
+    clientByNamespace = {};
   }
 
-  return [client];
+  return [clientByNamespace[namespace]];
 };
 
 export default useClient;

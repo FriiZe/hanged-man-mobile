@@ -1,42 +1,46 @@
-import type { StackScreenProps } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import type { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, View } from 'react-native';
-import { ListItem } from 'react-native-elements';
+import { Button, ListItem } from 'react-native-elements';
 import { useSelector } from 'react-redux';
 
 import LeaveRoomConfirmOverlay from '../components/LeaveRoomConfirmOverlay';
 import useClient from '../hooks/useClient';
 import type { RoomsRoutes } from '../routes';
-import { selectToken } from '../store/reducers/auth';
+import { selectToken } from '../store/slices/auth';
 import fetch from '../utils/fetch';
 import type { BeforeRemoveEvent } from '../utils/types';
 
 type Props = StackScreenProps<RoomsRoutes, 'Lobby'>;
-
-/**
-  * @todo(front)
-  * create socket when join
-  * emit event room({roomId})
-  * listen event player-joined({playerId})
-  * listen event player-left({playerId})
-  *
-  */
-
+type NavProps = StackNavigationProp<RoomsRoutes, 'Lobby'>;
 interface Player {
   displayName: string;
   id: string;
 }
 
+interface Room {
+  id: string;
+  name: string;
+  isPublic: boolean;
+  players: string[];
+  owner: string;
+}
+
 const LobbyScreen : React.FC<Props> = ({ navigation, route }) => {
   const [showLeaveRoomConfirmOverlay, setShowLeaveRoomConfirmOverlay] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isOwner, setIsOwner] = useState(false);
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [roomPlayers, setRoomPlayers] = useState<Player[]>([]);
   const [event, setEvent] = useState<BeforeRemoveEvent | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const token = useSelector(selectToken);
-  const [client] = useClient(token);
+  const [client] = useClient(token, 'rooms');
 
   const { roomId } = route.params;
+
+  const nav = useNavigation<NavProps>();
 
   const toggleOverlay = (): void => {
     setShowLeaveRoomConfirmOverlay(!showLeaveRoomConfirmOverlay);
@@ -59,16 +63,36 @@ const LobbyScreen : React.FC<Props> = ({ navigation, route }) => {
     setRoomPlayers(updatedPlayers);
   };
 
-  client?.on('player-joined', async ({ playerId }) => { await getPlayer(playerId); });
+  const createGame = async (): Promise<void> => {
+    try {
+      setIsButtonLoading(true);
+      await fetch.post('/games', { roomId, trials: 5 });
+    // eslint-disable-next-line no-empty
+    } catch (err) {}
+  };
 
-  client?.on('player-left', ({ playerId }) => { deletePlayer(playerId); });
+  client?.on('player-joined', async ({ playerId }: {playerId: string}) => { await getPlayer(playerId); });
+
+  client?.on('player-left', ({ playerId }: {playerId: string}) => { deletePlayer(playerId); });
+
+  client?.on('game-created', ({ gameId }: {gameId:string}) => {
+    nav.replace('Game', { gameId, players: roomPlayers });
+  });
+
+  const setRoomOwner = async (): Promise<void> => {
+    const { owner } = await fetch.get<Room>(`/rooms/${roomId}`);
+    const { id } = await fetch.get<Player>('/players/me');
+    setIsOwner(owner === id);
+  };
 
   useEffect(
     () => {
       navigation.addListener('beforeRemove', (e:BeforeRemoveEvent) => {
-        e.preventDefault();
-        setEvent(e);
-        toggleOverlay();
+        if (e.data.action.type === 'POP') {
+          e.preventDefault();
+          setEvent(e);
+          toggleOverlay();
+        }
       });
     },
   );
@@ -76,6 +100,7 @@ const LobbyScreen : React.FC<Props> = ({ navigation, route }) => {
   useEffect(() => {
     setIsLoading(true);
     void getAllRoomPlayers();
+    void setRoomOwner();
     client?.emit('room', roomId);
     setIsLoading(false);
   }, []);
@@ -105,6 +130,21 @@ const LobbyScreen : React.FC<Props> = ({ navigation, route }) => {
                 ),
               )}
             </ScrollView>
+            {
+              isOwner
+                ? (
+                  <Button
+                    buttonStyle={{ marginTop: '10%' }}
+                    disabled={roomPlayers.length < 2}
+                    loading={isButtonLoading}
+                    title="Lancer la partie"
+                    onPress={async (): Promise<void> => {
+                      await createGame();
+                    }}
+                  />
+                )
+                : null
+            }
             <LeaveRoomConfirmOverlay
               event={event}
               isVisible={showLeaveRoomConfirmOverlay}
