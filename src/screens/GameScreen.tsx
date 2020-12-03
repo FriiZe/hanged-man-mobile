@@ -2,12 +2,12 @@ import type { StackScreenProps } from '@react-navigation/stack';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { Button, Input, Text } from 'react-native-elements';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import useClient from '../hooks/useClient';
 import type { RoomsRoutes } from '../routes';
 import { selectToken } from '../store/slices/auth';
-import { selectId } from '../store/slices/player';
+import { incrementWins, selectId } from '../store/slices/player';
 import fetch from '../utils/fetch';
 import type { BeforeRemoveEvent } from '../utils/types';
 
@@ -39,6 +39,7 @@ const GameScreen: React.FC<Props> = ({ navigation, route }) => {
   const token = useSelector(selectToken);
   const playerId = useSelector(selectId);
   const [client] = useClient(token, 'games');
+  const dispatch = useDispatch();
 
   const partialWord = game?.partialWord ?? '';
 
@@ -48,6 +49,13 @@ const GameScreen: React.FC<Props> = ({ navigation, route }) => {
   const getWinnerPlayer = (): Player | null => players
     .filter((item) => item.id === game?.winner)[0];
 
+  const leaveGame = (): void => {
+    if (game?.winner === playerId) {
+      dispatch(incrementWins());
+    }
+    navigation.replace('Rooms');
+  };
+
   const submitInput = (): void => {
     client?.emit('play', { gameId, input: input.trim() });
     setInput('');
@@ -56,7 +64,7 @@ const GameScreen: React.FC<Props> = ({ navigation, route }) => {
   useEffect(
     () => {
       navigation.addListener('beforeRemove', (e:BeforeRemoveEvent) => {
-        if (e.data.action.type === 'POP') {
+        if (e.data.action.type.startsWith('POP')) {
           e.preventDefault();
         }
       });
@@ -77,9 +85,6 @@ const GameScreen: React.FC<Props> = ({ navigation, route }) => {
     client?.emit('game', gameId);
     void getGame();
   }, []);
-
-  useEffect(() => {
-  }, [game]);
 
   client?.on('player-played', (newGame: Game) => {
     setGame(newGame);
@@ -146,7 +151,7 @@ const GameScreen: React.FC<Props> = ({ navigation, route }) => {
                   ? (
                     <Button
                       title="Revenir aux salons"
-                      onPress={(): void => { navigation.replace('Rooms'); }}
+                      onPress={(): void => { leaveGame(); }}
                     />
                   )
                   : (

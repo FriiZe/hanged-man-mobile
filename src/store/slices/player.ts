@@ -89,9 +89,7 @@ const playerSlice = createSlice({
   initialState,
   name: 'player',
   reducers: {
-    incrementWins: (state): State => (
-      { ...state, gamesWon: state.gamesWon + 1 }
-    ),
+    incrementWins: (state): State => ({ ...state, gamesWon: state.gamesWon + 1 }),
     joinGame: (state): State => (
       { ...state, isInGame: true }
     ),
