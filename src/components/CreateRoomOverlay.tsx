@@ -18,6 +18,7 @@ type NavigationProps = StackNavigationProp<RoomsRoutes, 'Rooms'>;
 
 const CreateRoomOverlay: React.FC<Props> = ({ onBackdropPress }) => {
   const [roomName, setRoomName] = useState('');
+  const [trials, setTrials] = useState<string | undefined>(undefined);
   const [code, setCode] = useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,6 +27,7 @@ const CreateRoomOverlay: React.FC<Props> = ({ onBackdropPress }) => {
   const submit = async (): Promise<void> => {
     setIsLoading(true);
     let roomId: string | null = null;
+    const convertedTrials = trials ? Number.parseInt(trials, 10) : undefined;
     try {
       const { id } = await fetch.post<{id: string}>('/rooms', { code, name: roomName });
       roomId = id;
@@ -35,9 +37,11 @@ const CreateRoomOverlay: React.FC<Props> = ({ onBackdropPress }) => {
     setIsLoading(false);
     onBackdropPress();
     if (roomId) {
-      navigation.push('Lobby', { roomId });
+      navigation.push('Lobby', { roomId, trials: convertedTrials });
     }
   };
+
+  const trialsValidator = trials && (Number.parseInt(trials, 10) <= 0 || Number.parseInt(trials, 10) > 50) ? 'entre 0 et 50' : '';
 
   const codeValidator = code?.length && code?.length !== 4 ? '4 caractères' : '';
 
@@ -65,6 +69,21 @@ const CreateRoomOverlay: React.FC<Props> = ({ onBackdropPress }) => {
             onChangeText={(value): void => { setRoomName(value); }}
           />
           <Input
+            errorMessage={trialsValidator}
+            keyboardType="number-pad"
+            label="Essais"
+            leftIcon={(
+              <Icon
+                color="#adb5bd"
+                name="ios-chatboxes"
+                type="ionicon"
+              />
+              )}
+            placeholder="Nombre d'essais (optionnel)"
+            value={trials}
+            onChangeText={(value): void => { setTrials(value); }}
+          />
+          <Input
             secureTextEntry
             errorMessage={codeValidator}
             keyboardType="number-pad"
@@ -81,7 +100,7 @@ const CreateRoomOverlay: React.FC<Props> = ({ onBackdropPress }) => {
             onChangeText={(value): void => { setCode(value); }}
           />
           <Button
-            disabled={!roomName || !!(code?.length && code?.length !== 4)}
+            disabled={!roomName || (code?.length != null && code?.length !== 4) || trialsValidator !== ''}
             loading={isLoading}
             title="Confirmer"
             onPress={async ():Promise<void> => { await submit(); }}

@@ -65,7 +65,7 @@ const LobbyScreen : React.FC<Props> = ({ navigation, route }) => {
   const createGame = async (): Promise<void> => {
     try {
       setIsButtonLoading(true);
-      await fetch.post('/games', { roomId, trials: 5 });
+      await fetch.post('/games', { roomId, trials: route.params.trials });
     // eslint-disable-next-line no-empty
     } catch (err) {}
   };

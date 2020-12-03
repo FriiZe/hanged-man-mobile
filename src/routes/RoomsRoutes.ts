@@ -5,7 +5,7 @@ interface Player {
 
 type RoomsRoutes = {
   Rooms: undefined;
-  Lobby: { roomId: string };
+  Lobby: { roomId: string, trials?: number };
   Game: { players: Player[], gameId: string }
 };
 
