@@ -116,7 +116,7 @@ const LobbyScreen : React.FC<Props> = ({ navigation, route }) => {
         ? <ActivityIndicator color="#3a77d2" size="large" />
         : (
           <View style={{ bottom: 0, width: '90%' }}>
-            <ScrollView style={{ marginTop: '5%', maxHeight: '80%' }}>
+            <ScrollView style={{ height: '80%', marginTop: '5%' }}>
               {roomPlayers.map(
                 (player) => (
                   <ListItem key={player.id} style={{ marginTop: '3%' }}>

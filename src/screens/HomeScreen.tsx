@@ -10,15 +10,19 @@ import type { UnsignedRoutes } from '../routes';
 type Props = StackScreenProps<UnsignedRoutes, 'Home'>;
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => (
-  <View style={{ flex: 1, justifyContent: 'center' }}>
+  <View style={{
+    alignSelf: 'center', flex: 1, justifyContent: 'center', width: '80%',
+  }}
+  >
     <Button
-      buttonStyle={{ alignSelf: 'center', marginBottom: '3%' }}
+      buttonStyle={{ alignSelf: 'center', marginBottom: '3%', width: '100%' }}
       title="Inscription"
       onPress={(): void => navigation.push('SignUp')}
     />
     <Button
       buttonStyle={{
         alignSelf: 'center',
+        width: '100%',
       }}
       title="Connexion"
       onPress={(): void => navigation.push('SignIn')}
