@@ -13,6 +13,10 @@ const ProfileScreen : React.FC = () => {
   const victoriesCount = useSelector(selectGamesWon);
   const dispatch = useDispatch();
 
+  const closeOverlay = (): void => {
+    setIsOverlayVisible(false);
+  };
+
   return (
     <View style={{
       alignItems: 'center', flex: 1, marginTop: '20%',
@@ -61,23 +65,22 @@ const ProfileScreen : React.FC = () => {
           </ListItem.Title>
         </ListItem.Content>
       </ListItem>
-      <View style={{ marginTop: '120%', width: '80%' }}>
+      <View style={{ marginTop: '110%', width: '80%' }}>
         <Button
           title="Modifier mon profil"
           onPress={(): void => { setIsOverlayVisible(true); }}
         />
         <Button
+          buttonStyle={{ marginTop: '3%' }}
           title="Déconnexion"
           onPress={(): void => { dispatch(signOut()); }}
         />
       </View>
-      {isOverlayVisible
-        ? (
-          <CompleteProfileOverlay
-            isVisible={isOverlayVisible}
-          />
-        )
-        : null}
+      {
+        isOverlayVisible
+          ? <CompleteProfileOverlay closeOverlay={closeOverlay} />
+          : null
+        }
     </View>
   );
 };

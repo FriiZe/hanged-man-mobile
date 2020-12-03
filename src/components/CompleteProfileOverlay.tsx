@@ -11,36 +11,25 @@ import {
 } from '../store/slices/player';
 
 interface Props {
-  isVisible: boolean;
+  closeOverlay: () => void
 }
 
-const CompleteProfileOverlay: React.FC<Props> = ({ isVisible: isV }) => {
+const CompleteProfileOverlay: React.FC<Props> = ({ closeOverlay }) => {
   const [displayName, setDisplayName] = useState('');
-  const [isVisible, setIsVisible] = useState(isV);
+  const [isVisible, setIsVisible] = useState(true);
   const currentDisplayName = useSelector(selectDisplayName);
 
   const dispatch = useDispatch();
   const isLoading = useSelector(selectIsLoading);
 
   const submit = (): void => {
-    // if (displayName) {
-    //   if (currentDisplayName && onBackdropPress) {
-    //     dispatch(updatePlayer(displayName));
-    //     setIsVisible(false);
-    //     onBackdropPress();
-    //   } else {
-    //     dispatch(createPlayer(displayName));
-    //     setIsVisible(false);
-    //   }
-    // }
-    console.log(displayName, currentDisplayName);
     if (!currentDisplayName) {
       dispatch(createPlayer(displayName));
       setIsVisible(false);
     } else {
       dispatch(updatePlayer(displayName));
       setIsVisible(false);
-      // if (onBackdropPress) onBackdropPress();
+      closeOverlay();
     }
   };
 
