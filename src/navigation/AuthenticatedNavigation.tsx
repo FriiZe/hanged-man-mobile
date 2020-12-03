@@ -13,7 +13,7 @@ import CompleteProfileOverlay from '../components/CompleteProfileOverlay';
 import type { SignedRoutes } from '../routes';
 import ProfileScreen from '../screens/ProfileScreen';
 import {
-  fetchPlayer, selectDisplayName, selectId,
+  fetchPlayer, selectDisplayName, selectId, selectIsLoading,
 } from '../store/slices/player';
 import RoomsNavigation from './RoomsNavigation';
 
@@ -22,6 +22,7 @@ const AuthenticatedNavigation: React.FC = () => {
   const dispatch = useDispatch();
   const myPlayerId = useSelector(selectId);
   const isProfileCompleted = useSelector(selectDisplayName);
+  const isLoading = useSelector(selectIsLoading);
 
   useEffect(() => {
     if (myPlayerId === '') {
@@ -56,7 +57,7 @@ const AuthenticatedNavigation: React.FC = () => {
         <Tab.Screen component={ProfileScreen} name="Profile" options={{ title: 'Profil' }} />
         <Tab.Screen component={RoomsNavigation} name="Game" options={{ title: 'Jouer' }} />
       </Tab.Navigator>
-      { !isProfileCompleted ? <CompleteProfileOverlay /> : null}
+      { !isProfileCompleted && !isLoading ? <CompleteProfileOverlay /> : null}
       <Toast ref={(ref: unknown) => Toast.setRef(ref)} />
     </NavigationContainer>
   );
