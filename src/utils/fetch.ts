@@ -1,7 +1,10 @@
+import getEnvironment from '../helpers/getEnvironment';
 import { fetcher } from './fetcher';
 import showToast from './showToast';
 
-const fetch = fetcher('https://dev.api.hanged-man.potb.dev')
+const environment = getEnvironment();
+
+const fetch = fetcher(environment.apiEndpoint)
   .headers({
     Accept: 'application/json',
     'Content-Type': 'application/json',
