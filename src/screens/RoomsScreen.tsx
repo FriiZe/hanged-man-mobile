@@ -58,7 +58,6 @@ const RoomsScreen : React.FC = () => {
   }, []);
 
   return (
-
     <View style={{
       alignItems: 'center',
       flex: 1,
@@ -67,7 +66,7 @@ const RoomsScreen : React.FC = () => {
     >
       {
         isLoading
-          ? <ActivityIndicator color="#0000ff" size="large" />
+          ? <ActivityIndicator color="#3a77d2" size="large" />
           : (
             <View style={{ bottom: 0, width: '90%' }}>
               <ScrollView style={{ marginTop: '5%', maxHeight: '80%' }}>

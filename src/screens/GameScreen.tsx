@@ -92,7 +92,7 @@ const GameScreen: React.FC<Props> = ({ navigation, route }) => {
     >
       {
         isLoading
-          ? <ActivityIndicator color="#0000ff" size="large" />
+          ? <ActivityIndicator color="#3a77d2" size="large" />
           : (
             <View>
               <View style={{ marginLeft: '3%', marginTop: '3%' }}>

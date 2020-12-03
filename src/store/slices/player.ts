@@ -71,6 +71,7 @@ const playerSlice = createSlice({
 export const selectId = (state: {player: State}): string => state.player.id;
 export const selectIsLoading = (state: {player: State}): boolean => state.player.isLoading;
 export const selectDisplayName = (state: {player: State}): string => state.player.displayName;
+export const selectGamesWon = (state: {player: State}): number => state.player.gamesWon;
 
 export const {
   incrementWins,

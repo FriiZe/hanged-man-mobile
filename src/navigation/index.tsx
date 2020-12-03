@@ -52,7 +52,7 @@ const Navigation : React.FC = () => {
     },
   }), []);
   return isLoading
-    ? <ActivityIndicator color="#0000ff" size="large" />
+    ? <ActivityIndicator color="#3a77d2" size="large" />
     : (
       <AuthContext.Provider value={authContext}>
         {token ? <AuthenticatedNavigation /> : <UnauthenticatedNavigation />}

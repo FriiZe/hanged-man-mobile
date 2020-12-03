@@ -113,7 +113,7 @@ const LobbyScreen : React.FC<Props> = ({ navigation, route }) => {
     >
       {
       isLoading
-        ? <ActivityIndicator color="#0000ff" size="large" />
+        ? <ActivityIndicator color="#3a77d2" size="large" />
         : (
           <View style={{ bottom: 0, width: '90%' }}>
             <ScrollView style={{ marginTop: '5%', maxHeight: '80%' }}>

@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 
+import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import React, { useEffect } from 'react';
@@ -31,7 +32,28 @@ const AuthenticatedNavigation: React.FC = () => {
 
   return (
     <NavigationContainer>
-      <Tab.Navigator lazy initialRouteName="Game">
+      <Tab.Navigator
+        lazy
+        initialRouteName="Game"
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ color, size }) => {
+            let iconName = '';
+
+            if (route.name === 'Profile') {
+              iconName = 'ios-person';
+            } else if (route.name === 'Game') {
+              iconName = 'logo-game-controller-a';
+            }
+
+            // You can return any component that you like here!
+            return <Ionicons color={color} name={iconName} size={size} />;
+          },
+        })}
+        tabBarOptions={{
+          activeTintColor: '#3a77d2',
+          inactiveTintColor: 'gray',
+        }}
+      >
         <Tab.Screen component={ProfileScreen} name="Profile" options={{ title: 'Profil' }} />
         <Tab.Screen component={RoomsNavigation} name="Game" options={{ title: 'Jouer' }} />
       </Tab.Navigator>
