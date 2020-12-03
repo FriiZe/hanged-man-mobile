@@ -20,12 +20,12 @@ import RoomsNavigation from './RoomsNavigation';
 const AuthenticatedNavigation: React.FC = () => {
   const Tab = createBottomTabNavigator<SignedRoutes>();
   const dispatch = useDispatch();
-  const myPlayerId = useSelector(selectId);
+  const currentPlayerId = useSelector(selectId);
   const isProfileCompleted = useSelector(selectDisplayName);
   const isLoading = useSelector(selectIsLoading);
 
   useEffect(() => {
-    if (myPlayerId === '') {
+    if (currentPlayerId === '') {
       dispatch(fetchPlayer());
     }
   }, []);
