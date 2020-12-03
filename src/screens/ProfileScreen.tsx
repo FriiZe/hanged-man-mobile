@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View } from 'react-native';
 import { Button, ListItem, Text } from 'react-native-elements';
 import { useDispatch, useSelector } from 'react-redux';
 
+import CompleteProfileOverlay from '../components/CompleteProfileOverlay';
 import { signOut } from '../store/slices/auth';
 import { selectDisplayName, selectGamesWon } from '../store/slices/player';
 
 const ProfileScreen : React.FC = () => {
+  const [isOverlayVisible, setIsOverlayVisible] = useState(false);
   const playerName = useSelector(selectDisplayName);
   const victoriesCount = useSelector(selectGamesWon);
   const dispatch = useDispatch();
@@ -61,10 +63,21 @@ const ProfileScreen : React.FC = () => {
       </ListItem>
       <View style={{ marginTop: '120%', width: '80%' }}>
         <Button
+          title="Modifier mon profil"
+          onPress={(): void => { setIsOverlayVisible(true); }}
+        />
+        <Button
           title="Déconnexion"
           onPress={(): void => { dispatch(signOut()); }}
         />
       </View>
+      {isOverlayVisible
+        ? (
+          <CompleteProfileOverlay
+            isVisible={isOverlayVisible}
+          />
+        )
+        : null}
     </View>
   );
 };
