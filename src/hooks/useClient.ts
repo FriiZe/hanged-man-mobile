@@ -1,10 +1,14 @@
 import io from 'socket.io-client';
 
+import getEnvironment from '../helpers/getEnvironment';
+
 let clientByNamespace: Record<string, SocketIOClient.Socket> = {};
+
+const environment = getEnvironment();
 
 const useClient = (token: string | null, namespace: string): [SocketIOClient.Socket | null] => {
   if (!clientByNamespace[namespace] && token !== null) {
-    const client = io(`wss://dev.ws.hanged-man.potb.dev/${namespace}`, {
+    const client = io(`${environment.websocketEndpoint}/${namespace}`, {
       secure: true,
       transportOptions: {
         polling: {
