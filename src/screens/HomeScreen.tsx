@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import type { StackScreenProps } from '@react-navigation/stack';
 import React from 'react';
 import { View } from 'react-native';

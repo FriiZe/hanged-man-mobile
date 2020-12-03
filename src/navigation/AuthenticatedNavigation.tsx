@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
@@ -35,8 +34,9 @@ const AuthenticatedNavigation: React.FC = () => {
       <Tab.Navigator
         lazy
         initialRouteName="Game"
+        // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
         screenOptions={({ route }) => ({
-          tabBarIcon: ({ color, size }) => {
+          tabBarIcon: ({ color, size }): JSX.Element => {
             let iconName = '';
 
             if (route.name === 'Profile') {
@@ -45,7 +45,6 @@ const AuthenticatedNavigation: React.FC = () => {
               iconName = 'logo-game-controller-a';
             }
 
-            // You can return any component that you like here!
             return <Ionicons color={color} name={iconName} size={size} />;
           },
         })}
