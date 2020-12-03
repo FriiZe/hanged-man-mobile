@@ -24,7 +24,7 @@ const CompleteProfileOverlay: React.FC = () => {
     <View>
       <Overlay isVisible={isVisible}>
         <View>
-          <Text h4>Modifier mon profil</Text>
+          <Text h4>Créer mon profil</Text>
           <Input
             autoCapitalize="none"
             label="Pseudo"
