@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-community/async-storage';
-import { AppLoading } from 'expo';
 import React, { useEffect } from 'react';
+import { ActivityIndicator } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import type { Context } from '../helpers/AuthContext';
@@ -19,9 +19,7 @@ import AuthenticatedNavigation from './AuthenticatedNavigation';
 import UnauthenticatedNavigation from './UnauthenticatedNavigation';
 
 const Navigation : React.FC = () => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const isLoading = useSelector(selectIsLoading);
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const token = useSelector(selectToken);
   const getToken = async (): Promise<void> => {
     let t: string | null = null;
@@ -54,7 +52,7 @@ const Navigation : React.FC = () => {
     },
   }), []);
   return isLoading
-    ? <AppLoading />
+    ? <ActivityIndicator color="#0000ff" size="large" />
     : (
       <AuthContext.Provider value={authContext}>
         {token ? <AuthenticatedNavigation /> : <UnauthenticatedNavigation />}

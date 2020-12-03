@@ -32,7 +32,7 @@ interface Player {
 const GameScreen: React.FC<Props> = ({ navigation, route }) => {
   const { players: pl, gameId } = route.params;
   const [isLoading, setIsLoading] = useState(true);
-  const [players] = useState(pl);
+  const [players] = useState(pl ?? []);
   const [game, setGame] = useState<Game | null>(null);
   const [input, setInput] = useState('');
 
@@ -87,9 +87,7 @@ const GameScreen: React.FC<Props> = ({ navigation, route }) => {
 
   return (
     <View style={{
-      alignItems: 'center',
       flex: 1,
-      justifyContent: 'center',
     }}
     >
       {
@@ -97,15 +95,20 @@ const GameScreen: React.FC<Props> = ({ navigation, route }) => {
           ? <ActivityIndicator color="#0000ff" size="large" />
           : (
             <View>
-              <Text>
-                Historique des lettres : 
-                {game?.letterHistory.join(', ')}
-              </Text>
-              <Text>
-                Historique des mots : 
-                {game?.wordHistory.join(', ')}
-              </Text>
-              {
+              <View style={{ marginLeft: '3%', marginTop: '3%' }}>
+                <Text>
+                  Historique des lettres :
+                  {' '}
+                  {game?.letterHistory.join(', ')}
+                </Text>
+                <Text style={{ marginTop: '3%' }}>
+                  Historique des mots :
+                  {' '}
+                  {[game?.wordHistory].join(', ')}
+                </Text>
+              </View>
+              <View style={{ alignItems: 'center', display: 'flex', marginTop: '20%' }}>
+                {
                 game?.isFinished
                   ? (
                     <Text h3>
@@ -123,15 +126,22 @@ const GameScreen: React.FC<Props> = ({ navigation, route }) => {
                     </Text>
                   )
               }
-
-              <Text h2>{[...partialWord].join(' ')}</Text>
-              <Input
-                label="Proposition"
-                placeholder="Lettre ou mot"
-                value={input}
-                onChangeText={(value): void => { setInput(value); }}
-              />
-              {
+                <Text h2 style={{ marginTop: '5%' }}>{[...partialWord].join(' ')}</Text>
+                <View style={{ marginTop: '70%', width: '80%' }}>
+                  <Input
+                    label="Proposition"
+                    placeholder="Lettre ou mot"
+                    value={input}
+                    onChangeText={(value): void => { setInput(value); }}
+                  />
+                  <Text style={{ marginBottom: '5%', marginLeft: '3%', marginTop: '-5%' }}>
+                    Il reste
+                    {' '}
+                    {game?.trials ?? 0 * pl.length}
+                    {' '}
+                    essai(s)
+                  </Text>
+                  {
                 game?.isFinished
                   ? (
                     <Button
@@ -147,6 +157,8 @@ const GameScreen: React.FC<Props> = ({ navigation, route }) => {
                     />
                   )
               }
+                </View>
+              </View>
 
             </View>
           )

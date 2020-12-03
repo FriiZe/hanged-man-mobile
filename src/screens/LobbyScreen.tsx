@@ -34,7 +34,6 @@ const LobbyScreen : React.FC<Props> = ({ navigation, route }) => {
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [roomPlayers, setRoomPlayers] = useState<Player[]>([]);
   const [event, setEvent] = useState<BeforeRemoveEvent | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const token = useSelector(selectToken);
   const [client] = useClient(token, 'rooms');
 
