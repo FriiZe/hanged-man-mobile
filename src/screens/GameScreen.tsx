@@ -49,7 +49,7 @@ const GameScreen: React.FC<Props> = ({ navigation, route }) => {
     .filter((item) => item.id === game?.winner)[0];
 
   const submitInput = (): void => {
-    client?.emit('play', { gameId, input });
+    client?.emit('play', { gameId, input: input.trim() });
     setInput('');
   };
 
@@ -137,9 +137,9 @@ const GameScreen: React.FC<Props> = ({ navigation, route }) => {
                   <Text style={{ marginBottom: '5%', marginLeft: '3%', marginTop: '-5%' }}>
                     Il reste
                     {' '}
-                    {game?.trials ?? 0 * pl.length}
+                    {game?.trials ? game.trials + 1 : 0}
                     {' '}
-                    essai(s)
+                    essai(s) par personne
                   </Text>
                   {
                 game?.isFinished

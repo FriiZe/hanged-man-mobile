@@ -59,15 +59,14 @@ const ProfileScreen : React.FC = () => {
           </ListItem.Title>
         </ListItem.Content>
       </ListItem>
-      <Button
-        buttonStyle={{
-          alignItems: 'center', display: 'flex', justifyContent: 'center', marginTop: '400%',
-        }}
-        title="Déconnexion"
-        onPress={async (): Promise<void> => {
-          await signOut();
-        }}
-      />
+      <View style={{ marginTop: '120%', width: '80%' }}>
+        <Button
+          title="Déconnexion"
+          onPress={async (): Promise<void> => {
+            await signOut();
+          }}
+        />
+      </View>
     </View>
   );
 };
