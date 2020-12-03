@@ -1,15 +1,15 @@
 import React from 'react';
 import { View } from 'react-native';
 import { Button, ListItem, Text } from 'react-native-elements';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import AuthContext from '../helpers/AuthContext';
+import { signOut } from '../store/slices/auth';
 import { selectDisplayName, selectGamesWon } from '../store/slices/player';
 
 const ProfileScreen : React.FC = () => {
-  const { signOut } = React.useContext(AuthContext);
   const playerName = useSelector(selectDisplayName);
   const victoriesCount = useSelector(selectGamesWon);
+  const dispatch = useDispatch();
 
   return (
     <View style={{
@@ -62,9 +62,7 @@ const ProfileScreen : React.FC = () => {
       <View style={{ marginTop: '120%', width: '80%' }}>
         <Button
           title="Déconnexion"
-          onPress={async (): Promise<void> => {
-            await signOut();
-          }}
+          onPress={(): void => { dispatch(signOut()); }}
         />
       </View>
     </View>
