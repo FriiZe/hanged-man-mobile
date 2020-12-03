@@ -12,6 +12,8 @@ interface State {
   isInRoom: boolean;
 }
 
+type WithoutIsLoading = Omit<State, 'isLoading'>;
+
 const initialState: State = {
   displayName: '',
   gamesWon: 0,
@@ -21,31 +23,68 @@ const initialState: State = {
   isLoading: false,
 };
 
-export const fetchPlayer = createAsyncThunk('player/fetchPlayer', () => fetch.get<Omit<State, 'isLoading'>>('/players/me'));
+export const fetchPlayer = createAsyncThunk(
+  'player/fetchPlayer',
+  () => fetch.get<WithoutIsLoading>('/players/me'),
+);
 
-export const createPlayer = createAsyncThunk('player/createPlayer', (displayName: string) => fetch.post<Omit<State, 'isLoading'>>('/players', { displayName }));
+export const createPlayer = createAsyncThunk(
+  'player/createPlayer',
+  (displayName: string) => fetch.post<WithoutIsLoading>('/players', { displayName }),
+);
 
-export const updatePlayer = createAsyncThunk('player/updatePlayer', (displayName: string) => fetch.patch<Omit<State, 'isLoading'>>('/players/me', { displayName }));
+export const updatePlayer = createAsyncThunk(
+  'player/updatePlayer',
+  (displayName: string) => fetch.patch<WithoutIsLoading>('/players/me', { displayName }),
+);
 
 const playerSlice = createSlice({
   extraReducers: (builder) => {
-    builder.addCase(fetchPlayer.pending, (state) => ({ ...state, isLoading: true }));
-    builder.addCase(fetchPlayer.fulfilled, (_, action: PayloadAction<Omit<State, 'isLoading'>>) => (
-      { ...action.payload, isLoading: false }
-    ));
-    builder.addCase(fetchPlayer.rejected, (state) => ({ ...state, isLoading: false }));
+    builder.addCase(
+      fetchPlayer.pending,
+      (state) => ({ ...state, isLoading: true }),
+    );
 
-    builder.addCase(createPlayer.pending, (state) => ({ ...state, isLoading: true }));
-    builder.addCase(createPlayer.fulfilled, (_, action: PayloadAction<Omit<State, 'isLoading'>>) => (
-      { ...action.payload, isLoading: false }
-    ));
-    builder.addCase(createPlayer.rejected, (state) => ({ ...state, isLoading: false }));
+    builder.addCase(
+      fetchPlayer.fulfilled,
+      (_, action: PayloadAction<WithoutIsLoading>) => ({ ...action.payload, isLoading: false }),
+    );
 
-    builder.addCase(updatePlayer.pending, (state) => ({ ...state, isLoading: true }));
-    builder.addCase(updatePlayer.fulfilled, (_, action: PayloadAction<Omit<State, 'isLoading'>>) => (
-      { ...action.payload, isLoading: false }
-    ));
-    builder.addCase(updatePlayer.rejected, (state) => ({ ...state, isLoading: false }));
+    builder.addCase(
+      fetchPlayer.rejected,
+      (state) => ({ ...state, isLoading: false }),
+    );
+
+    builder.addCase(
+      createPlayer.pending,
+      (state) => ({ ...state, isLoading: true }),
+    );
+
+    builder.addCase(
+      createPlayer.fulfilled,
+      (_, action: PayloadAction<WithoutIsLoading>) => ({ ...action.payload, isLoading: false }),
+    );
+
+    builder.addCase(
+      createPlayer.rejected,
+      (state) => ({ ...state, isLoading: false }),
+    );
+
+    builder.addCase(
+      updatePlayer.pending,
+      (state) => ({ ...state, isLoading: true }),
+    );
+
+    builder.addCase(
+      updatePlayer.fulfilled,
+      (_, action: PayloadAction<WithoutIsLoading>) => ({ ...action.payload, isLoading: false }),
+    );
+
+    builder.addCase(
+      updatePlayer.rejected,
+      (state) => ({ ...state, isLoading: false }
+      ),
+    );
   },
   initialState,
   name: 'player',
@@ -68,10 +107,12 @@ const playerSlice = createSlice({
   },
 });
 
-export const selectId = (state: {player: State}): string => state.player.id;
-export const selectIsLoading = (state: {player: State}): boolean => state.player.isLoading;
-export const selectDisplayName = (state: {player: State}): string => state.player.displayName;
-export const selectGamesWon = (state: {player: State}): number => state.player.gamesWon;
+interface Store { player: State }
+
+export const selectId = (store: Store): string => store.player.id;
+export const selectIsLoading = (store: Store): boolean => store.player.isLoading;
+export const selectDisplayName = (store: Store): string => store.player.displayName;
+export const selectGamesWon = (store: Store): number => store.player.gamesWon;
 
 export const {
   incrementWins,

@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import CreateRoomOverlay from '../components/CreateRoomOverlay';
 import RoomCard from '../components/RoomCard';
 import useClient from '../hooks/useClient';
-import { selectToken } from '../store/slices/auth';
+import { selectIsLoading, selectToken } from '../store/slices/auth';
 import fetch from '../utils/fetch';
 
 interface Room {
@@ -19,11 +19,11 @@ interface Room {
 }
 
 const RoomsScreen : React.FC = () => {
-  const [isLoading, setIsLoading] = useState(true);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
   const [rooms, setRooms] = useState<Room[]>([]);
 
   const token = useSelector(selectToken);
+  const isLoading = useSelector(selectIsLoading);
   const [client] = useClient(token, 'rooms');
 
   const getRoom = async (roomId: string): Promise<void> => {
@@ -52,9 +52,7 @@ const RoomsScreen : React.FC = () => {
   };
 
   useEffect(() => {
-    setIsLoading(true);
     void getAllRooms();
-    setIsLoading(false);
   }, []);
 
   return (

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
 import { Button, Icon, Input } from 'react-native-elements';
+import { useDispatch, useSelector } from 'react-redux';
 
-import AuthContext from '../helpers/AuthContext';
+import { selectIsLoading, signIn } from '../store/slices/auth';
 
 interface Props {
   username?: string
@@ -11,18 +12,9 @@ interface Props {
 const SignInForm: React.FC<Props> = ({ username: us }) => {
   const [username, setUsername] = useState(us ?? '');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
 
-  const { signIn } = React.useContext(AuthContext);
-
-  const submit = async (): Promise<void> => {
-    setIsLoading(true);
-    try {
-      await signIn(username, password);
-    } catch (err) {
-      setIsLoading(false);
-    }
-  };
+  const isLoading = useSelector(selectIsLoading);
+  const dispatch = useDispatch();
 
   return (
     <View style={{ alignSelf: 'center', width: '80%' }}>
@@ -64,7 +56,7 @@ const SignInForm: React.FC<Props> = ({ username: us }) => {
         disabled={!username || !password}
         loading={isLoading}
         title="Se connecter"
-        onPress={async ():Promise<void> => { await submit(); }}
+        onPress={(): void => { dispatch(signIn({ password, username })); }}
       />
     </View>
   );

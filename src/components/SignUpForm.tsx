@@ -3,26 +3,24 @@ import type { StackNavigationProp } from '@react-navigation/stack';
 import React, { useState } from 'react';
 import { View } from 'react-native';
 import { Button, Icon, Input } from 'react-native-elements';
+import { useDispatch, useSelector } from 'react-redux';
 
-import AuthContext from '../helpers/AuthContext';
 import type { UnsignedRoutes } from '../routes';
+import { selectIsLoading, signUp } from '../store/slices/auth';
 
 type Props = StackNavigationProp<UnsignedRoutes, 'SignUp'>;
 
 const SignUpForm: React.FC = () => {
-  const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const { signUp } = React.useContext(AuthContext);
-
+  const isLoading = useSelector(selectIsLoading);
+  const dispatch = useDispatch();
   const navigation = useNavigation<Props>();
 
-  const submit = async ():Promise<void> => {
-    setIsButtonLoading(true);
-    await signUp(username, password);
-    setIsButtonLoading(false);
+  const submit = (): void => {
+    dispatch(signUp({ password, username }));
     navigation.replace('SignIn', { username });
   };
 
@@ -89,9 +87,9 @@ const SignUpForm: React.FC = () => {
           width: '70%',
         }}
         disabled={!username || !password || !confirmPassword}
-        loading={isButtonLoading}
+        loading={isLoading}
         title="S'inscrire"
-        onPress={async ():Promise<void> => { await submit(); }}
+        onPress={(): void => { submit(); }}
       />
     </View>
   );

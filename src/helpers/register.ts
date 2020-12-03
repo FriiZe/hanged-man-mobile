@@ -1,7 +1,7 @@
 import fetch from '../utils/fetch';
 import showToast from '../utils/showToast';
 
-const signUp = async (username: string, password: string): Promise<void> => {
+const register = async (username: string, password: string): Promise<void> => {
   try {
     await fetch
       .catcher(409, () => {
@@ -14,4 +14,4 @@ const signUp = async (username: string, password: string): Promise<void> => {
   showToast('Compte créé avec succès', 'Vous pouvez dès à présent vous connecter', 'success');
 };
 
-export default signUp;
+export default register;

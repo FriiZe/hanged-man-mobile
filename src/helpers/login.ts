@@ -1,7 +1,7 @@
 import fetch from '../utils/fetch';
 import showToast from '../utils/showToast';
 
-const signIn = async (username: string, password:string): Promise<string> => {
+const login = async (username: string, password:string): Promise<{token: string}> => {
   const res = await fetch
     .catcher(401, () => {
       showToast('Indentifiants invalides', 'Merci pour ton mot de passe Netflix :)', 'error');
@@ -11,7 +11,7 @@ const signIn = async (username: string, password:string): Promise<string> => {
     })
     .post<{token: string}>('/auth/login', { password, username });
 
-  return res.token;
+  return res;
 };
 
-export default signIn;
+export default login;
